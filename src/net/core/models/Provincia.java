@@ -3,7 +3,7 @@ package net.core.models;
 import java.util.Objects;
 
 public class Provincia {
-    private final int ID, IDCCAA;
+    private final int ID, IDCCAA; // ID - PK IDCCAA - FK
     private final String name;
     private int poblacion;
     
@@ -19,6 +19,10 @@ public class Provincia {
 
     public int getID() {
         return ID;
+    }
+
+    public int getPoblacion() {
+        return poblacion;
     }
 
     public int getIDCCAA() {

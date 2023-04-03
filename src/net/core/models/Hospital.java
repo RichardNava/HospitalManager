@@ -9,8 +9,12 @@ public final class Hospital implements Comparable<Hospital> {
 
     private LocalDate fecha;
     private Unidad unidad;
-    private String provincia;
-    private int camas;
+    private String provincia; // int idProvincias 
+    private int camas,
+            ocupadascovid19,
+            ocupadasnocovid19,
+            ingresoscovid19,
+            altas24hcovid19;
 
     public Hospital() {
     }
@@ -88,9 +92,9 @@ public final class Hospital implements Comparable<Hospital> {
     @Override
     public int compareTo(Hospital t) {
         if (this.unidad.ordinal() - t.unidad.ordinal() != 0) {
-                
+
             return this.unidad.ordinal() - t.unidad.ordinal();
-                
+
         }
         return this.camas - t.camas;
     }
