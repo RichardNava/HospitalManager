@@ -3,15 +3,10 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+            <file>file:/D:/Programación/Proyectos/HospitalManager/src/net/core/dao/JdbcDAO.java</file>
             <file>file:/D:/Programación/Proyectos/HospitalManager/src/net/core/client/Start.java</file>
-            <file>file:/D:/Programación/Proyectos/HospitalManager/src/net/core/dao/JDBCDAO.java</file>
-            <file>file:/D:/Programación/Proyectos/HospitalManager/src/net/core/dao/CollectionsDAO.java</file>
-            <file>file:/D:/Programación/Proyectos/HospitalManager/src/net/core/entities/Provincia.java</file>
-            <file>file:/D:/Programación/Proyectos/HospitalManager/src/net/core/data/poblacion_provincias.csv</file>
-            <file>file:/D:/Programación/Proyectos/HospitalManager/src/net/core/data/comunidades_autonomas.csv</file>
-            <file>file:/D:/Programación/Proyectos/HospitalManager/src/net/core/data/provincias.csv</file>
-            <file>file:/D:/Programación/Proyectos/HospitalManager/src/net/core/entities/ComunidadAutonoma.java</file>
-            <file>file:/D:/Programación/Proyectos/HospitalManager/src/net/core/models/ComunidadAutonoma.java</file>
+            <file>file:/D:/Programación/Proyectos/HospitalManager/src/net/core/manager/HospitalManager.java</file>
+            <file>file:/D:/Programación/Proyectos/HospitalManager/src/net/core/models/HospitalCSV.java</file>
         </group>
     </open-files>
 </project-private>
