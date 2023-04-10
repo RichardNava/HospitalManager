@@ -18,14 +18,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import net.core.models.ComunidadAutonoma;
-import net.core.models.Hospital;
-import net.core.models.Provincia;
+import net.core.models.ComunidadAutonomaCSV;
+import net.core.models.HospitalCSV;
+import net.core.models.ProvinciaCSV;
 
 public final class CollectionsDAO {
 
     private final List<String[]> datos = new ArrayList<>();
-    private final Set<Hospital> hospitales = new TreeSet<>();
+    private final Set<HospitalCSV> hospitales = new TreeSet<>();
     private final Path URL = Path.of("src\\net\\core\\data\\hospitales_capacidad.csv").toAbsolutePath();
     private String[] indices;
 
@@ -134,21 +134,21 @@ public final class CollectionsDAO {
     public void inputHospitals(Collection<String> data) { // TODO: añadir ids provincias y CCAA
         for (String dato : data) {
             String[] rows = dato.split(";");
-            hospitales.add(new Hospital(rows[0], rows[1], rows[5], Integer.parseInt(rows[6])));
+            hospitales.add(new HospitalCSV(rows[0], rows[1], rows[5], Integer.parseInt(rows[6])));
         }
     }
 
-    public List<Provincia> inputProvincias() {
+    public List<ProvinciaCSV> inputProvincias() {
         return datos.stream()
-                .map(arr -> new Provincia(Integer.parseInt(arr[4]), Integer.parseInt(arr[2]), arr[5]))
+                .map(arr -> new ProvinciaCSV(Integer.parseInt(arr[4]), Integer.parseInt(arr[2]), arr[5]))
                 .distinct()
                 .sorted((a, b) -> a.getID() - b.getID())
                 .collect(Collectors.toList());
         
     }
-    public List<ComunidadAutonoma> inputCCAA(Map<Integer, Integer> caPop) {
+    public List<ComunidadAutonomaCSV> inputCCAA(Map<Integer, Integer> caPop) {
         return datos.stream()
-                .map(arr -> new ComunidadAutonoma(Integer.parseInt(arr[2]),arr[3]))
+                .map(arr -> new ComunidadAutonomaCSV(Integer.parseInt(arr[2]),arr[3]))
                 .distinct()
                 .peek(ca -> ca.setPoblacion(caPop.get(ca.getID())))
                 .sorted((a, b) -> a.getID() - b.getID())
@@ -167,7 +167,7 @@ public final class CollectionsDAO {
         return datos;
     }
 
-    public Set<Hospital> getHospitales() {
+    public Set<HospitalCSV> getHospitales() {
         return hospitales;
     }
 

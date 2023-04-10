@@ -14,9 +14,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
-import net.core.models.Provincia;
+import net.core.entities.ComunidadAutonoma;
+import net.core.entities.Hospital;
+import net.core.entities.Provincia;
+import net.core.models.ProvinciaCSV;
+import net.core.models.Unidad;
 
-public class JDBCDAO implements AutoCloseable {
+public class JdbcDAO implements AutoCloseable {
 
     private final Connection con;
     private final CollectionsDAO cDAO = new CollectionsDAO();
@@ -25,11 +29,11 @@ public class JDBCDAO implements AutoCloseable {
         try {
             Class.forName("org.sqlite.JDBC");
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(JDBCDAO.class.getName()).log(Level.SEVERE, "No se ha cargado el driver", ex);
+            Logger.getLogger(JdbcDAO.class.getName()).log(Level.SEVERE, "No se ha cargado el driver", ex);
         }
     }
 
-    public JDBCDAO(String URL) throws SQLException {
+    public JdbcDAO(String URL) throws SQLException {
         this.con = DriverManager.getConnection(URL);
 
     }
@@ -101,7 +105,7 @@ public class JDBCDAO implements AutoCloseable {
                         ps.setInt(8, Integer.parseInt(s[4]));
                         ps.addBatch();
                     } catch (SQLException ex) {
-                        Logger.getLogger(JDBCDAO.class.getName()).log(Level.SEVERE, "", ex);
+                        Logger.getLogger(JdbcDAO.class.getName()).log(Level.SEVERE, "", ex);
                     }
                 });
         ps.executeBatch();
@@ -121,7 +125,7 @@ public class JDBCDAO implements AutoCloseable {
                         ps.setInt(3, Integer.parseInt(s[3]));
                         ps.addBatch();
                     } catch (SQLException ex) {
-                        Logger.getLogger(JDBCDAO.class.getName()).log(Level.SEVERE, "Error de conexión", ex);
+                        Logger.getLogger(JdbcDAO.class.getName()).log(Level.SEVERE, "Error de conexión", ex);
                     }
                 });
         ps.executeBatch();
@@ -138,14 +142,14 @@ public class JDBCDAO implements AutoCloseable {
                         ps.setInt(2, Integer.parseInt(s[2]));
                         ps.addBatch();
                     } catch (SQLException ex) {
-                        Logger.getLogger(JDBCDAO.class.getName()).log(Level.SEVERE, "Error de conexión", ex);
+                        Logger.getLogger(JdbcDAO.class.getName()).log(Level.SEVERE, "Error de conexión", ex);
                     }
                 });
         ps.executeBatch();
     }
 
-    public List<Provincia> readProvincias() throws SQLException {
-        List<Provincia> provincias = new ArrayList<>();
+    public List<ProvinciaCSV> readProvincias() throws SQLException {
+        List<ProvinciaCSV> provincias = new ArrayList<>();
         Statement st = con.createStatement();
         st.execute("""
                    SELECT id,
@@ -155,14 +159,14 @@ public class JDBCDAO implements AutoCloseable {
                      FROM provincia;""");
         ResultSet rs = st.getResultSet();
         while (rs.next()) {
-            Provincia p = new Provincia(rs.getInt(1), rs.getInt(2), rs.getString(3));
+            ProvinciaCSV p = new ProvinciaCSV(rs.getInt(1), rs.getInt(2), rs.getString(3));
             p.setPoblacion(rs.getInt(4));
             provincias.add(p);
         }
         return provincias;
     }
 
-    public Map<Integer, List<Provincia>> groupingProv() throws SQLException {
+    public Map<Integer, List<ProvinciaCSV>> groupingProv() throws SQLException {
         return readProvincias()
                 .stream()
                 .collect(Collectors.groupingBy(p -> p.getIDCCAA()));
@@ -182,6 +186,48 @@ public class JDBCDAO implements AutoCloseable {
                                         .mapToInt(p -> p.getPoblacion())
                                         .sum())
                 );
+    }
+
+    public List<Hospital> selectHospitalByIDProvincia(int idProvincia) throws SQLException {
+        PreparedStatement ps = con.prepareStatement("SELECT * FROM hospitales WHERE id_provincia = ?");
+        ps.setInt(1, idProvincia);
+        ResultSet rs = ps.executeQuery();
+        List<Hospital> hospitales = new ArrayList<>();
+        while (rs.next()) {
+            hospitales.add(new Hospital(rs.getInt(1),
+                    rs.getString(2),
+                    rs.getString(3),
+                    rs.getDouble(4),
+                    rs.getDouble(5),
+                    rs.getDouble(6),
+                    rs.getDouble(7),
+                    rs.getDouble(8),
+                    rs.getInt(9)));
+        }
+        return hospitales;
+
+    }
+
+    public List<Provincia> selectProvinciaByIDCA(int idComunidadAutonoma) throws SQLException {
+        PreparedStatement ps = con.prepareStatement("SELECT * FROM provincia WHERE id_ca = ?");
+        ps.setInt(1, idComunidadAutonoma);
+        ResultSet rs = ps.executeQuery();
+        List<Provincia> provincias = new ArrayList<>();
+        while (rs.next()) {
+            provincias.add(new Provincia(rs.getInt(1), rs.getString(3), rs.getInt(4), selectHospitalByIDProvincia(rs.getInt(1)), rs.getInt(2)));
+        }
+        return provincias;
+
+    }
+
+    public List<ComunidadAutonoma> selectAllCA() throws SQLException {
+        Statement ps = con.createStatement();
+        ResultSet rs = ps.executeQuery("SELECT * FROM comunidad_autonoma");
+        List<ComunidadAutonoma> comunidades = new ArrayList<>();
+        while (rs.next()) {
+            comunidades.add(new ComunidadAutonoma(rs.getInt(1), rs.getString(2), rs.getInt(3), selectProvinciaByIDCA(rs.getInt(1))));
+        }
+        return comunidades;
     }
 
     @Override

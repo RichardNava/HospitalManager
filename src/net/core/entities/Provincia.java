@@ -36,9 +36,9 @@ public class Provincia implements Serializable, Comparable<Provincia> {
     @Column(name = "nombre")
     private String nombre;
     @Column(name = "poblacion")
-    private String poblacion;
+    private int poblacion;
     @OneToMany(mappedBy = "idProvincia")
-    private List<Hospitales> hospitalesList;
+    private List<Hospital> hospitalesList;
     @JoinColumn(name = "id_ca", referencedColumnName = "ID")
     @ManyToOne
     private ComunidadAutonoma idCa;
@@ -48,6 +48,14 @@ public class Provincia implements Serializable, Comparable<Provincia> {
 
     public Provincia(Integer id) {
         this.id = id;
+    }
+
+    public Provincia(Integer id, String nombre, int poblacion, List<Hospital> hospitalesList, int idCa) {
+        this.id = id;
+        this.nombre = nombre;
+        this.poblacion = poblacion;
+        this.hospitalesList = hospitalesList;
+        this.idCa = new ComunidadAutonoma(idCa);
     }
 
     public Integer getId() {
@@ -66,19 +74,19 @@ public class Provincia implements Serializable, Comparable<Provincia> {
         this.nombre = nombre;
     }
 
-    public String getPoblacion() {
+    public int getPoblacion() {
         return poblacion;
     }
 
-    public void setPoblacion(String poblacion) {
+    public void setPoblacion(int poblacion) {
         this.poblacion = poblacion;
     }
 
-    public List<Hospitales> getHospitalesList() {
+    public List<Hospital> getHospitalesList() {
         return hospitalesList;
     }
 
-    public void setHospitalesList(List<Hospitales> hospitalesList) {
+    public void setHospitalesList(List<Hospital> hospitalesList) {
         this.hospitalesList = hospitalesList;
     }
 
@@ -104,20 +112,20 @@ public class Provincia implements Serializable, Comparable<Provincia> {
             return false;
         }
         Provincia other = (Provincia) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
-            return false;
-        }
-        return true;
+        return !((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)));
     }
 
     @Override
     public String toString() {
-        return "net.core.prueba.Provincia[ id=" + id + " ]";
+        return "Provincia -> " + "ID= " + id + ", Nombre= " + nombre + ", Poblacion= " + poblacion;
     }
+
+
 
     @Override
     public int compareTo(Provincia o) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return this.id - o.id;
+
     }
-    
+
 }

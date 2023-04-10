@@ -3,8 +3,8 @@
   <persistence-unit name="HospitalManagerPU" transaction-type="RESOURCE_LOCAL">
     <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
     <class>net.core.entities.Provincia</class>
-    <class>net.core.entities.Hospitales</class>
     <class>net.core.entities.ComunidadAutonoma</class>
+    <class>net.core.entities.Hospital</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:sqlite:D:\Programación\Proyectos\HospitalManager\src\net\core\data\hospitaL_manager.db"/>
       <property name="javax.persistence.jdbc.user" value=""/>
